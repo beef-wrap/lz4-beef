@@ -1,0 +1,10 @@
+FileVersion = 1
+
+[Project]
+Name = "lz4-beef"
+TargetType = "BeefLib"
+StartupObject = "lz4_beef.Program"
+
+[Configs.Debug.Win64]
+CLibType = "DynamicDebug"
+LibPaths = ["$(ProjectDir)\\libs\\lz4d.lib"]

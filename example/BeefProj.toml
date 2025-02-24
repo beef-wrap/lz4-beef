@@ -1,0 +1,11 @@
+FileVersion = 1
+Dependencies = {corlib = "*", lz4-beef = "*"}
+
+[Project]
+Name = "example"
+TargetType = "BeefGUIApplication"
+StartupObject = "example.Program"
+
+[Configs.Debug.Win64]
+CLibType = "DynamicDebug"
+DebugCommandArguments = "test.txt"
