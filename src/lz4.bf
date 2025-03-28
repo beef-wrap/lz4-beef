@@ -35,17 +35,17 @@
 using System;
 using System.Interop;
 
-namespace lz4_Beef;
+namespace lz4;
 
 public static class lz4
 {
 	typealias size_t = uint;
 	typealias short = c_short;
 	typealias char = c_char;
-	typealias LZ4_byte = char8;
-	typealias LZ4_i8 = int8;
-	typealias LZ4_u16 = uint16;
-	typealias LZ4_u32 = uint32;
+	public typealias LZ4_byte = char8;
+	public typealias LZ4_i8 = int8;
+	public typealias LZ4_u16 = uint16;
+	public typealias LZ4_u32 = uint32;
 
 	/**
 	  Introduction
@@ -78,12 +78,12 @@ public static class lz4
 	*/
 
 	/*------   Version   ------*/
-	const int LZ4_VERSION_MAJOR    = 1; /* for breaking interface changes  */
-	const int LZ4_VERSION_MINOR    = 10; /* for new (non-breaking) interface capabilities */
-	const int LZ4_VERSION_RELEASE  = 0; /* for tweaks, bug-fixes, or development */
+	const c_int LZ4_VERSION_MAJOR    = 1; /* for breaking interface changes  */
+	const c_int LZ4_VERSION_MINOR    = 10; /* for new (non-breaking) interface capabilities */
+	const c_int LZ4_VERSION_RELEASE  = 0; /* for tweaks, bug-fixes, or development */
 
-	[CLink] public static extern int LZ4_versionNumber(void); /**< library version number; useful to check dll version; requires v1.3.0+ */
-	[CLink] public static extern char* LZ4_versionString(void); /**< library version string; useful to check dll version; requires v1.7.5+ */
+	[CLink] public static extern c_int LZ4_versionNumber(); /**< library version number; useful to check dll version; requires v1.3.0+ */
+	[CLink] public static extern char* LZ4_versionString(); /**< library version string; useful to check dll version; requires v1.7.5+ */
 
 
 	/*-************************************
@@ -112,10 +112,10 @@ public static class lz4
 	*/
 
 	/* These are absolute limits, they should not be changed by users */
-	const int LZ4_MEMORY_USAGE_MIN = 10;
-	const int LZ4_MEMORY_USAGE_DEFAULT = 14;
-	const int LZ4_MEMORY_USAGE_MAX = 20;
-	const int LZ4_MEMORY_USAGE = LZ4_MEMORY_USAGE_DEFAULT;
+	const c_int LZ4_MEMORY_USAGE_MIN = 10;
+	const c_int LZ4_MEMORY_USAGE_DEFAULT = 14;
+	const c_int LZ4_MEMORY_USAGE_MAX = 20;
+	const c_int LZ4_MEMORY_USAGE = LZ4_MEMORY_USAGE_DEFAULT;
 
 	/*-************************************
 	*  Simple Functions
@@ -134,7 +134,7 @@ public static class lz4
 	  *                or 0 if compression fails
 	  * Note : This function is protected against buffer overflow scenarios (never writes outside 'dst' buffer, nor read outside 'source' buffer).
 	  */
-	[CLink] public static extern int LZ4_compress_default(char* src, char* dst, int srcSize, int dstCapacity);
+	[CLink] public static extern c_int LZ4_compress_default(char* src, char* dst, c_int srcSize, c_int dstCapacity);
 
 	/*! LZ4_decompress_safe() :
 	  * @compressedSize : is the exact complete size of the compressed block.
@@ -151,7 +151,7 @@ public static class lz4
 	  *          The implementation is free to send / store / derive this information in whichever way is most beneficial.
 	  *          If there is a need for a different format which bundles together both compressed data and its metadata, consider looking at lz4frame.h instead.
 	  */
-	[CLink] public static extern int LZ4_decompress_safe(char* src, char* dst, int compressedSize, int dstCapacity);
+	[CLink] public static extern c_int LZ4_decompress_safe(char* src, char* dst, c_int compressedSize, c_int dstCapacity);
 
 	/*-************************************
 	*  Advanced Functions
@@ -168,7 +168,7 @@ public static class lz4
 			return : maximum output size in a "worst case" scenario
 				  or 0, if input size is incorrect (too large or negative)
 	*/
-	[CLink] public static extern int LZ4_compressBound(int inputSize);
+	[CLink] public static extern c_int LZ4_compressBound(c_int inputSize);
 
 	/*! LZ4_compress_fast() :
 		Same as LZ4_compress_default(), but allows selection of "acceleration" factor.
@@ -178,7 +178,7 @@ public static class lz4
 		Values <= 0 will be replaced by LZ4_ACCELERATION_DEFAULT (currently == 1, see lz4.c).
 		Values > LZ4_ACCELERATION_MAX will be replaced by LZ4_ACCELERATION_MAX (currently == 65537, see lz4.c).
 	*/
-	[CLink] public static extern int LZ4_compress_fast(char* src, char* dst, int srcSize, int dstCapacity, int acceleration);
+	[CLink] public static extern c_int LZ4_compress_fast(char* src, char* dst, c_int srcSize, c_int dstCapacity, c_int acceleration);
 
 	/*! LZ4_compress_fast_extState() :
 	  *  Same as LZ4_compress_fast(), using an externally allocated memory space for its state.
@@ -186,8 +186,8 @@ public static class lz4
 	  *  and allocate it on 8-bytes boundaries (using `malloc()` typically).
 	  *  Then, provide this buffer as `void* state` to compression function.
 	  */
-	[CLink] public static extern int LZ4_sizeofState(void);
-	[CLink] public static extern int LZ4_compress_fast_extState(void* state, char* src, char* dst, int srcSize, int dstCapacity, int acceleration);
+	[CLink] public static extern c_int LZ4_sizeofState();
+	[CLink] public static extern c_int LZ4_compress_fast_extState(void* state, char* src, char* dst, c_int srcSize, c_int dstCapacity, c_int acceleration);
 
 	/*! LZ4_compress_destSize() :
 	  *  Reverse the logic : compresses as much data as possible from 'src' buffer
@@ -215,7 +215,7 @@ public static class lz4
 	  *        a dstCapacity which is > decompressedSize, by at least 1 byte.
 	  *        See https://github.com/lz4/lz4/issues/859 for details
 	  */
-	[CLink] public static extern int LZ4_compress_destSize(char* src, char* dst, int* srcSizePtr, int targetDstSize);
+	[CLink] public static extern c_int LZ4_compress_destSize(char* src, char* dst, c_int* srcSizePtr, c_int targetDstSize);
 
 	/*! LZ4_decompress_safe_partial() :
 	  *  Decompress an LZ4 compressed block, of size 'srcSize' at position 'src',
@@ -251,7 +251,7 @@ public static class lz4
 	  *           then targetOutputSize **MUST** be <= block's decompressed size.
 	  *           Otherwise, *silent corruption will occur*.
 	  */
-	[CLink] public static extern int LZ4_decompress_safe_partial(char* src, char* dst, int srcSize, int targetOutputSize, int dstCapacity);
+	[CLink] public static extern c_int LZ4_decompress_safe_partial(char* src, char* dst, c_int srcSize, c_int targetOutputSize, c_int dstCapacity);
 
 	/*-*********************************************
 	*  Streaming Compression Functions
@@ -273,8 +273,8 @@ public static class lz4
 
 	// #if !defined(RC_INVOKED) /* https://docs.microsoft.com/en-us/windows/win32/menurc/predefined-macros */
 	// #if !defined(LZ4_STATIC_LINKING_ONLY_DISABLE_MEMORY_ALLOCATION)
-	[CLink] public static extern LZ4_stream_t* LZ4_createStream(void);
-	[CLink] public static extern int           LZ4_freeStream(LZ4_stream_t* streamPtr);
+	[CLink] public static extern LZ4_stream_t* LZ4_createStream();
+	[CLink] public static extern c_int LZ4_freeStream(LZ4_stream_t* streamPtr);
 	// #endif /* !defined(LZ4_STATIC_LINKING_ONLY_DISABLE_MEMORY_ALLOCATION) */
 	// #endif
 
@@ -313,7 +313,7 @@ public static class lz4
 	  *  Loading a size of 0 is allowed, and is the same as reset.
 	  * @return : loaded dictionary size, in bytes (note: only the last 64 KB are loaded)
 	  */
-	[CLink] public static extern int LZ4_loadDict(LZ4_stream_t* streamPtr, char* dictionary, int dictSize);
+	[CLink] public static extern c_int LZ4_loadDict(LZ4_stream_t* streamPtr, char* dictionary, c_int dictSize);
 
 	/*! LZ4_loadDictSlow() : v1.10.0+
 	  *  Same as LZ4_loadDict(),
@@ -322,7 +322,7 @@ public static class lz4
 	  *  The extra-cpu cost is likely worth it if the dictionary is re-used across multiple sessions.
 	  * @return : loaded dictionary size, in bytes (note: only the last 64 KB are loaded)
 	  */
-	[CLink] public static extern int LZ4_loadDictSlow(LZ4_stream_t* streamPtr, char* dictionary, int dictSize);
+	[CLink] public static extern c_int LZ4_loadDictSlow(LZ4_stream_t* streamPtr, char* dictionary, c_int dictSize);
 
 	/*! LZ4_attach_dictionary() : stable since v1.10.0
 	  *
@@ -381,7 +381,7 @@ public static class lz4
 	  *
 	  *  Note 5 : After an error, the stream status is undefined (invalid), it can only be reset or freed.
 	  */
-	[CLink] public static extern int LZ4_compress_fast_continue(LZ4_stream_t* streamPtr, char* src, char* dst, int srcSize, int dstCapacity, int acceleration);
+	[CLink] public static extern c_int LZ4_compress_fast_continue(LZ4_stream_t* streamPtr, char* src, char* dst, c_int srcSize, c_int dstCapacity, c_int acceleration);
 
 	/*! LZ4_saveDict() :
 	  *  If last 64KB data cannot be guaranteed to remain available at its current memory location,
@@ -390,14 +390,14 @@ public static class lz4
 	  *  but is much faster, because LZ4_saveDict() doesn't need to rebuild tables.
 	  * @return : saved dictionary size in bytes (necessarily <= maxDictSize), or 0 if error.
 	  */
-	[CLink] public static extern int LZ4_saveDict(LZ4_stream_t* streamPtr, char* safeBuffer, int maxDictSize);
+	[CLink] public static extern c_int LZ4_saveDict(LZ4_stream_t* streamPtr, char* safeBuffer, c_int maxDictSize);
 
 
 	/*-**********************************************
 	*  Streaming Decompression Functions
 	*  Bufferless synchronous API
 	************************************************/
-	[Union] struct LZ4_streamDecode_t { }; /* tracking context */
+	[Union] struct LZ4_streamDecode_t { } /* tracking context */
 
 	/*! LZ4_createStreamDecode() and LZ4_freeStreamDecode() :
 	  *  creation / destruction of streaming decompression tracking context.
@@ -405,8 +405,8 @@ public static class lz4
 	  */
 	  // #if !defined(RC_INVOKED) /* https://docs.microsoft.com/en-us/windows/win32/menurc/predefined-macros */
 	  // #if !defined(LZ4_STATIC_LINKING_ONLY_DISABLE_MEMORY_ALLOCATION)
-	  //   [CLink] public static extern LZ4_streamDecode_t* LZ4_createStreamDecode(void);
-	  //   [CLink] public static extern int                 LZ4_freeStreamDecode (LZ4_streamDecode_t* LZ4_stream);
+	  //   [CLink] public static extern LZ4_streamDecode_t* LZ4_createStreamDecode();
+	  //   [CLink] public static extern c_int LZ4_freeStreamDecode (LZ4_streamDecode_t* LZ4_stream);
 	  // #endif /* !defined(LZ4_STATIC_LINKING_ONLY_DISABLE_MEMORY_ALLOCATION) */
 	  // #endif
 
@@ -417,7 +417,7 @@ public static class lz4
 	  *  Dictionary is presumed stable : it must remain accessible and unmodified during next decompression.
 	  * @return : 1 if OK, 0 if error
 	  */
-	[CLink] public static extern int LZ4_setStreamDecode(LZ4_streamDecode_t* LZ4_streamDecode, char* dictionary, int dictSize);
+	[CLink] public static extern c_int LZ4_setStreamDecode(LZ4_streamDecode_t* LZ4_streamDecode, char* dictionary, c_int dictSize);
 
 	/*! LZ4_decoderRingBufferSize() : v1.8.2+
 	  *  Note : in a ring buffer scenario (optional),
@@ -430,7 +430,7 @@ public static class lz4
 	  * @return : minimum ring buffer size,
 	  *           or 0 if there is an error (invalid maxBlockSize).
 	  */
-	[CLink] public static extern int LZ4_decoderRingBufferSize(int maxBlockSize);
+	[CLink] public static extern c_int LZ4_decoderRingBufferSize(c_int maxBlockSize);
 
 	// #define LZ4_DECODER_RING_BUFFER_SIZE(maxBlockSize) (65536 + 14 + (maxBlockSize))  /* for static allocation; maxBlockSize presumed valid */
 
@@ -472,7 +472,7 @@ public static class lz4
 	  *  save the last 64KB of decoded data into a safe buffer where it can't be modified during decompression,
 	  *  then indicate where this data is saved using LZ4_setStreamDecode(), before decompressing next block.
 	*/
-	[CLink] public static extern int LZ4_decompress_safe_continue(LZ4_streamDecode_t* LZ4_streamDecode, char* src, char* dst, int srcSize, int dstCapacity);
+	[CLink] public static extern c_int LZ4_decompress_safe_continue(LZ4_streamDecode_t* LZ4_streamDecode, char* src, char* dst, c_int srcSize, c_int dstCapacity);
 
 
 	/*! LZ4_decompress_safe_usingDict() :
@@ -483,7 +483,7 @@ public static class lz4
 	  *  Performance tip : Decompression speed can be substantially increased
 	  *                    when dst == dictStart + dictSize.
 	  */
-	[CLink] public static extern int LZ4_decompress_safe_usingDict(char* src, char* dst, int srcSize, int dstCapacity, char* dictStart, int dictSize);
+	[CLink] public static extern c_int LZ4_decompress_safe_usingDict(char* src, char* dst, c_int srcSize, c_int dstCapacity, char* dictStart, c_int dictSize);
 
 	/*! LZ4_decompress_safe_partial_usingDict() :
 	  *  Behaves the same as LZ4_decompress_safe_partial()
@@ -491,7 +491,7 @@ public static class lz4
 	  *  Performance tip : Decompression speed can be substantially increased
 	  *                    when dst == dictStart + dictSize.
 	  */
-	[CLink] public static extern int LZ4_decompress_safe_partial_usingDict(char* src, char* dst, int compressedSize, int targetOutputSize, int maxOutputSize, char* dictStart, int dictSize);
+	[CLink] public static extern c_int LZ4_decompress_safe_partial_usingDict(char* src, char* dst, c_int compressedSize, c_int targetOutputSize, c_int maxOutputSize, char* dictStart, c_int dictSize);
 
 
 	/*^*************************************
@@ -528,13 +528,13 @@ public static class lz4
 	  *  this function initializes the provided state with a call to something like LZ4_resetStream_fast()
 	  *  while LZ4_compress_fast_extState() starts with a call to LZ4_resetStream().
 	  */
-	[CLink] public static extern int LZ4_compress_fast_extState_fastReset(void* state, char* src, char* dst, int srcSize, int dstCapacity, int acceleration);
+	[CLink] public static extern c_int LZ4_compress_fast_extState_fastReset(void* state, char* src, char* dst, c_int srcSize, c_int dstCapacity, c_int acceleration);
 
 	/*! LZ4_compress_destSize_extState() : introduced in v1.10.0
 	  *  Same as LZ4_compress_destSize(), but using an externally allocated state.
 	  *  Also: exposes @acceleration
 	  */
-	[CLink] public static extern int LZ4_compress_destSize_extState(void* state, char* src, char* dst, int* srcSizePtr, int targetDstSize, int acceleration);
+	[CLink] public static extern c_int LZ4_compress_destSize_extState(void* state, char* src, char* dst, c_int* srcSizePtr, c_int targetDstSize, c_int acceleration);
 
 	/*! In-place compression and decompression
 	  *
@@ -594,9 +594,9 @@ public static class lz4
  * They are only exposed to allow static allocation of `LZ4_stream_t` and `LZ4_streamDecode_t`.
  * Accessing members will expose user code to API and/or ABI break in future versions of the library.
  **************************************************************/
-	const int LZ4_HASHLOG =   (LZ4_MEMORY_USAGE - 2);
-	const int LZ4_HASHTABLESIZE = (1 << LZ4_MEMORY_USAGE);
-	const int LZ4_HASH_SIZE_U32 = (1 << LZ4_HASHLOG); /* required as macro for static allocation */
+	const c_int LZ4_HASHLOG =   (LZ4_MEMORY_USAGE - 2);
+	const c_int LZ4_HASHTABLESIZE = (1 << LZ4_MEMORY_USAGE);
+	const c_int LZ4_HASH_SIZE_U32 = (1 << LZ4_HASHLOG); /* required as macro for static allocation */
 
 	/*! LZ4_stream_t :
 	  *  Never ever use below internal definitions directly !
@@ -614,13 +614,13 @@ public static class lz4
 		/* Implicit padding to ensure structure is aligned */
 	}
 
-	const int LZ4_STREAM_MINSIZE  = ((1UL << (LZ4_MEMORY_USAGE)) + 32); /* static size, for inter-version compatibility */
+	const c_int LZ4_STREAM_MINSIZE  = ((1UL << (LZ4_MEMORY_USAGE)) + 32); /* static size, for inter-version compatibility */
 
 	[Union] public struct LZ4_stream_t
 	{
 		char[LZ4_STREAM_MINSIZE] minStateSize;
 		LZ4_stream_t_internal internal_donotuse;
-	}; /* previously typedef'd to LZ4_stream_t */
+	} /* previously typedef'd to LZ4_stream_t */
 
 
 	/*! LZ4_initStream() : v1.9.0+
@@ -679,29 +679,29 @@ public static class lz4
 
 	/*! Obsolete compression functions (since v1.7.3) */
 	[CLink, Obsolete("use LZ4_compress_default() instead")]
-	public static extern int LZ4_compress               (char* src, char* dest, int srcSize);
+	public static extern c_int LZ4_compress               (char* src, char* dest, c_int srcSize);
 
 	[CLink, Obsolete("use LZ4_compress_default() instead")]
-	public static extern int LZ4_compress_limitedOutput(char* src, char* dest, int srcSize, int maxOutputSize);
+	public static extern c_int LZ4_compress_limitedOutput(char* src, char* dest, c_int srcSize, c_int maxOutputSize);
 
 	[CLink, Obsolete("use LZ4_compress_fast_extState() instead")]
-	public static extern int LZ4_compress_withState               (void* state, char* source, char* dest, int inputSize);
+	public static extern c_int LZ4_compress_withState               (void* state, char* source, char* dest, c_int inputSize);
 
 	[CLink, Obsolete("use LZ4_compress_fast_extState() instead")]
-	public static extern int LZ4_compress_limitedOutput_withState(void* state, char* source, char* dest, int inputSize, int maxOutputSize);
+	public static extern c_int LZ4_compress_limitedOutput_withState(void* state, char* source, char* dest, c_int inputSize, c_int maxOutputSize);
 
 	[CLink, Obsolete("use LZ4_compress_fast_continue() instead")]
-	public static extern int LZ4_compress_continue                (LZ4_stream_t* LZ4_streamPtr, char* source, char* dest, int inputSize);
+	public static extern c_int LZ4_compress_continue                (LZ4_stream_t* LZ4_streamPtr, char* source, char* dest, c_int inputSize);
 
 	[CLink, Obsolete("use LZ4_compress_fast_continue() instead")]
-	public static extern int LZ4_compress_limitedOutput_continue  (LZ4_stream_t* LZ4_streamPtr, char* source, char* dest, int inputSize, int maxOutputSize);
+	public static extern c_int LZ4_compress_limitedOutput_continue  (LZ4_stream_t* LZ4_streamPtr, char* source, char* dest, c_int inputSize, c_int maxOutputSize);
 
 	/*! Obsolete decompression functions (since v1.8.0) */
 	[CLink, Obsolete("use LZ4_decompress_fast() instead")]
-	public static extern int LZ4_uncompress(char* source, char* dest, int outputSize);
+	public static extern c_int LZ4_uncompress(char* source, char* dest, c_int outputSize);
 
 	[CLink, Obsolete("use LZ4_decompress_safe() instead")]
-	public static extern int LZ4_uncompress_unknownOutputSize(char* source, char* dest, int isize, int maxOutputSize);
+	public static extern c_int LZ4_uncompress_unknownOutputSize(char* source, char* dest, c_int isize, c_int maxOutputSize);
 
 	/* Obsolete streaming functions (since v1.7.0)
 	* degraded functionality; do not use!
@@ -717,10 +717,10 @@ public static class lz4
 	public static extern void* LZ4_create(char* inputBuffer);
 
 	[CLink, Obsolete("Use LZ4_createStream() instead")]
-	public static extern int   LZ4_sizeofStreamState(void);
+	public static extern c_int LZ4_sizeofStreamState();
 
 	[CLink, Obsolete("Use LZ4_resetStream() instead")  ]
-	public static extern int   LZ4_resetStreamState(void* state, char* inputBuffer);
+	public static extern c_int LZ4_resetStreamState(void* state, char* inputBuffer);
 
 	[CLink, Obsolete("Use LZ4_saveDict() instead")]
 	public static extern char* LZ4_slideInputBuffer(void* state);
@@ -728,10 +728,10 @@ public static class lz4
 	/*! Obsolete streaming decoding functions (since v1.7.0) */
 
 	[CLink, Obsolete("use LZ4_decompress_safe_usingDict() instead")]
-	public static extern int LZ4_decompress_safe_withPrefix64k(char* src, char* dst, int compressedSize, int maxDstSize);
+	public static extern c_int LZ4_decompress_safe_withPrefix64k(char* src, char* dst, c_int compressedSize, c_int maxDstSize);
 
 	[CLink, Obsolete("use LZ4_decompress_fast_usingDict() instead")]
-	public static extern int LZ4_decompress_fast_withPrefix64k(char* src, char* dst, int originalSize);
+	public static extern c_int LZ4_decompress_fast_withPrefix64k(char* src, char* dst, c_int originalSize);
 
 	/*! Obsolete LZ4_decompress_fast variants (since v1.9.0) :
 	*  These functions used to be faster than LZ4_decompress_safe(),
@@ -760,13 +760,13 @@ public static class lz4
 	*         As a consequence, use these functions in trusted environments with trusted data **only**.
 	*/
 	[CLink, Obsolete("This function is deprecated and unsafe. Consider using LZ4_decompress_safe_partial() instead")]
-	public static extern int LZ4_decompress_fast(char* src, char* dst, int originalSize);
+	public static extern c_int LZ4_decompress_fast(char* src, char* dst, c_int originalSize);
 
 	[CLink, Obsolete("This function is deprecated and unsafe. Consider migrating towards LZ4_decompress_safe_continue() instead. Note that the contract will change (requires block's compressed size, instead of decompressed size)")]
-	public static extern int LZ4_decompress_fast_continue(LZ4_streamDecode_t* LZ4_streamDecode, char* src, char* dst, int originalSize);
+	public static extern c_int LZ4_decompress_fast_continue(LZ4_streamDecode_t* LZ4_streamDecode, char* src, char* dst, c_int originalSize);
 
 	[CLink, Obsolete("This function is deprecated and unsafe. Consider using LZ4_decompress_safe_partial_usingDict() instead")]
-	public static extern int LZ4_decompress_fast_usingDict(char* src, char* dst, int originalSize, char* dictStart, int dictSize);
+	public static extern c_int LZ4_decompress_fast_usingDict(char* src, char* dst, c_int originalSize, char* dictStart, c_int dictSize);
 
 	/*! LZ4_resetStream() :
 	*  An LZ4_stream_t structure must be initialized at least once.

@@ -35,13 +35,13 @@
 using System;
 using System.Interop;
 
-namespace lz4_Beef;
+namespace lz4;
 
 extension lz4
 {
-	struct FILE { };
-	struct LZ4_readFile_t { };
-	struct LZ4_writeFile_t { };
+	public struct FILE { }
+	public struct LZ4_readFile_t { }
+	public struct LZ4_writeFile_t { }
 
 	/*! LZ4F_readOpen() :
 	* Set read lz4file handle.

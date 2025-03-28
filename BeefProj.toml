@@ -2,9 +2,10 @@ FileVersion = 1
 
 [Project]
 Name = "lz4-beef"
-TargetType = "BeefLib"
-StartupObject = "lz4_beef.Program"
+DefaultNamespace = "lz4"
 
 [Configs.Debug.Win64]
-CLibType = "DynamicDebug"
-LibPaths = ["$(ProjectDir)\\libs\\lz4d.lib"]
+LibPaths = ["$(ProjectDir)\\libs\\windows\\x64\\lz4_d.lib"]
+
+[Configs.Release.Win64]
+LibPaths = ["$(ProjectDir)\\libs\\windows\\x64\\lz4.lib"]
